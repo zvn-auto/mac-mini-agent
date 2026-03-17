@@ -10,7 +10,7 @@ struct Steer: ParsableCommand {
             See.self, Click.self, Type.self, Hotkey.self, Scroll.self, Drag.self,
             Apps.self, Screens.self, Window.self,
             OcrCommand.self, Focus.self, Find.self,
-            Clipboard.self, Wait.self
+            Clipboard.self, Wait.self, Record.self
         ]
     )
 }

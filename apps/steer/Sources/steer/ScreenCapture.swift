@@ -118,4 +118,15 @@ enum ScreenCapture {
             throw SteerError.captureFailure("Failed to write PNG")
         }
     }
+
+    static func saveJPEG(_ image: CGImage, to url: URL, quality: CGFloat = 0.8) throws {
+        guard let dest = CGImageDestinationCreateWithURL(
+            url as CFURL, UTType.jpeg.identifier as CFString, 1, nil
+        ) else { throw SteerError.captureFailure("Cannot create JPEG dest") }
+        let options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: quality]
+        CGImageDestinationAddImage(dest, image, options as CFDictionary)
+        guard CGImageDestinationFinalize(dest) else {
+            throw SteerError.captureFailure("Failed to write JPEG")
+        }
+    }
 }
