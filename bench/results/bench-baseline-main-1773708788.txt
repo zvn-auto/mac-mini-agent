@@ -1,0 +1,15 @@
+=== Steer Benchmark: baseline-main ===
+Date: Mon Mar 16 20:53:08 EDT 2026
+Branch: main
+Steer version: 0.2.0
+
+Step 1: see (screenshot + AX tree)
+  200ms
+Step 1b: see --no-save — NOT AVAILABLE
+Step 2: ocr
+  404ms
+Step 3: click (0,0)
+  127ms
+Step 4: type 'hello'
+  188ms
+Step 5: hotkey escape

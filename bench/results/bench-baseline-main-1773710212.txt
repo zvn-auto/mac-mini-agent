@@ -1,0 +1,21 @@
+=== Steer Benchmark: baseline-main ===
+Date: Mon Mar 16 21:16:52 EDT 2026
+Branch: main
+Steer version: 0.2.0
+
+Step 1: see (screenshot + AX tree)
+  238ms
+Step 1b: see --no-save — NOT AVAILABLE
+Step 2: ocr
+  404ms
+Step 3: click
+  122ms
+Step 6: agent loop (see+ocr+click) x3
+  1695ms total (565ms avg/iteration)
+Step 7: scroll + see
+  236ms
+Step 8: OCR element count
+  43 elements found
+
+TOTAL: 3209ms
+

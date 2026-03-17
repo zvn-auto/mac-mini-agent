@@ -12,12 +12,12 @@ struct OCRResult: Codable {
 }
 
 enum OCR {
-    static func recognize(image: CGImage, minimumConfidence: Float = 0.5) throws -> [OCRResult] {
+    static func recognize(image: CGImage, minimumConfidence: Float = 0.5, accurate: Bool = false, languageCorrection: Bool = false) throws -> [OCRResult] {
         let handler = VNImageRequestHandler(cgImage: image, options: [:])
         let request = VNRecognizeTextRequest()
-        request.recognitionLevel = .accurate
+        request.recognitionLevel = accurate ? .accurate : .fast
         request.minimumTextHeight = 0.01
-        request.usesLanguageCorrection = true
+        request.usesLanguageCorrection = languageCorrection
         try handler.perform([request])
 
         guard let observations = request.results else { return [] }

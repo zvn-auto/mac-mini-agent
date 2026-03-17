@@ -23,6 +23,12 @@ struct OcrCommand: ParsableCommand {
     @Flag(name: .long, help: "Save OCR results as snapshot for click --on")
     var store = false
 
+    @Flag(name: .long, help: "Use accurate (slower) OCR recognition level")
+    var accurate = false
+
+    @Flag(name: .long, help: "Enable language correction (slower)")
+    var languageCorrection = false
+
     @Flag(name: .long, help: "Output JSON")
     var json = false
 
@@ -53,7 +59,7 @@ struct OcrCommand: ParsableCommand {
             appName = target.localizedName ?? "?"
         }
 
-        let results = try OCR.recognize(image: cgImage, minimumConfidence: confidence)
+        let results = try OCR.recognize(image: cgImage, minimumConfidence: confidence, accurate: accurate, languageCorrection: languageCorrection)
         var snapId: String? = nil
 
         if store {

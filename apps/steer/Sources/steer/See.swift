@@ -19,6 +19,9 @@ struct See: ParsableCommand {
     @Option(name: .long, help: "Filter elements by role: button, text, image, etc.")
     var role: String?
 
+    @Flag(name: .long, help: "Skip saving screenshot to disk")
+    var noSave = false
+
     @Flag(name: .long, help: "Output compact JSON (default: human-readable table)")
     var json = false
 
@@ -53,9 +56,12 @@ struct See: ParsableCommand {
         }
 
         let snapId = String(UUID().uuidString.prefix(8).lowercased())
-        try? FileManager.default.createDirectory(at: ElementStore.dir, withIntermediateDirectories: true)
-        let screenshotURL = ElementStore.dir.appendingPathComponent("\(snapId).png")
-        try ScreenCapture.savePNG(image, to: screenshotURL)
+        var screenshotURL: URL? = nil
+        if !noSave {
+            try? FileManager.default.createDirectory(at: ElementStore.dir, withIntermediateDirectories: true)
+            screenshotURL = ElementStore.dir.appendingPathComponent("\(snapId).png")
+            try ScreenCapture.savePNG(image, to: screenshotURL!)
+        }
 
         if !elements.isEmpty {
             ElementStore.save(id: snapId, elements: elements)
@@ -70,13 +76,14 @@ struct See: ParsableCommand {
             enc.outputFormatting = [.prettyPrinted, .sortedKeys]
             let elJson = (try? String(data: enc.encode(displayed), encoding: .utf8)) ?? "[]"
             let winJson = (try? String(data: enc.encode(windows), encoding: .utf8)) ?? "[]"
+            let ssPath = screenshotURL?.path ?? ""
             print("""
-            {"snapshot":"\(snapId)","app":"\(appName)","screenshot":"\(screenshotURL.path)","count":\(displayed.count),"windows":\(winJson),"elements":\(elJson)}
+            {"snapshot":"\(snapId)","app":"\(appName)","screenshot":"\(ssPath)","count":\(displayed.count),"windows":\(winJson),"elements":\(elJson)}
             """)
         } else {
             print("snapshot: \(snapId)")
             print("app: \(appName)")
-            print("screenshot: \(screenshotURL.path)")
+            if let ss = screenshotURL { print("screenshot: \(ss.path)") }
             print("elements: \(displayed.count)\(role != nil ? " (filtered by \(role!))" : "")")
             for w in windows {
                 let title = w.windowTitle ?? ""

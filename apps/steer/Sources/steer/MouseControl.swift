@@ -9,7 +9,7 @@ enum MouseControl {
         let uType: CGEventType = button == .right ? .rightMouseUp
             : button == .center ? .otherMouseUp : .leftMouseUp
         CGWarpMouseCursorPosition(pt)
-        usleep(20_000)
+        usleep(10_000)
         for i in 1...count {
             let dn = CGEvent(mouseEventSource: nil, mouseType: dType, mouseCursorPosition: pt, mouseButton: button)
             let up = CGEvent(mouseEventSource: nil, mouseType: uType, mouseCursorPosition: pt, mouseButton: button)
@@ -17,9 +17,9 @@ enum MouseControl {
             up?.setIntegerValueField(.mouseEventClickState, value: Int64(i))
             if !flags.isEmpty { dn?.flags = flags; up?.flags = flags }
             dn?.post(tap: .cghidEventTap)
-            usleep(50_000)
+            usleep(25_000)
             up?.post(tap: .cghidEventTap)
-            if i < count { usleep(50_000) }
+            if i < count { usleep(25_000) }
         }
     }
 

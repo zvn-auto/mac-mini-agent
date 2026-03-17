@@ -1,0 +1,24 @@
+=== Steer Benchmark: phase1-final ===
+Date: Mon Mar 16 21:21:33 EDT 2026
+Branch: steer-perf-experiment
+Steer version: 0.2.0
+
+Step 1: see (screenshot + AX tree)
+  225ms
+Step 1b: see --no-save
+  133ms
+Step 2: ocr
+  115ms
+Step 2b: ocr --accurate
+  296ms
+Step 3: click
+  87ms
+Step 6: agent loop (see+ocr+click) x3
+  777ms total (259ms avg/iteration)
+Step 7: scroll + see
+  190ms
+Step 8: OCR element count
+  37 elements found
+
+TOTAL: 2070ms
+
