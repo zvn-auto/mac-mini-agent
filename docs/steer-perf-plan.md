@@ -182,6 +182,56 @@ Current limitation: Electron apps (VS Code, Slack, Discord) return empty AX tree
 - Image-based element detection for common UI patterns (checkboxes, icons)
 - Template matching for known app UIs
 
+## Phase 1.5: Burst Capture (Record Command)
+
+Added `steer record` — a burst screenshot capture mode for observing temporal UI changes.
+
+### Usage
+
+```bash
+# Capture 3 seconds at 10fps (30 frames)
+steer record --duration 3 --fps 10 --app "Google Chrome"
+
+# Quick burst — 1 second at 20fps
+steer record --duration 1 --fps 20
+
+# Timing benchmark only (no disk writes)
+steer record --duration 2 --fps 15 --no-save
+
+# Machine-readable output
+steer record --duration 2 --fps 5 --json
+```
+
+### Design Decisions
+
+- **JPEG only** — PNG encoding is too slow for burst mode. JPEG at 0.8 quality gives ~285KB per frame vs ~1MB+ for PNG, with 2-4x faster encoding.
+- **No AX tree / OCR** — these add 100-400ms overhead per frame. Record is pure screenshot capture for maximum throughput.
+- **Frames saved to temp directory** — `/tmp/steer/record-<session-id>/frame-001.jpg`, `frame-002.jpg`, etc.
+- **FPS cap at 30** — above this, the capture + encode + save overhead exceeds the frame interval.
+
+### Benchmark Results
+
+| Requested FPS | Actual FPS | Frames (2s) | Notes |
+|--------------|-----------|-------------|-------|
+| 5 | 5.3 | 10 | ~285KB/frame |
+| 10 | 10.1 | 10 (1s) | Solid |
+| 20 | 19.2 | 20 (1s) | Near limit |
+
+### Use Cases
+
+- **Animation verification**: Click a button, immediately burst capture to see if a spring/tween/CSS transition actually animated
+- **Loading state testing**: Navigate to a page, capture frames to see loading → loaded transition
+- **Route transition debugging**: Capture frames during a page navigation to spot stale content or flicker
+- **CI/visual regression**: Capture burst during interaction, compare frames against baseline
+
+### Example: Testing a Spring Animation
+
+```bash
+# Click the "Bounce" button then immediately record
+steer click --on B5 --snapshot abc123 && steer record --duration 2 --fps 10 --app "Google Chrome"
+# Then read frames to verify the box moved
+```
+
 ## Testing Plan
 
 1. **Benchmark current steer:** Time each command type (`see`, `ocr`, `click`, `type`) in isolation and in a loop
